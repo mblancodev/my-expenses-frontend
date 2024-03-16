@@ -1,27 +1,32 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
-const dotenv = require("dotenv");
-
-dotenv.config();
+const Dotenv = require("dotenv-webpack");
+const TerserPlugin = require("terser-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
-  entry: "./src/bootstrap.tsx",
-  mode: "development",
+  entry: "./src/index.tsx",
+  mode: "production",
   cache: false,
   target: "web",
-  output: { publicPath: "/" },
+  output: {
+    clean: true,
+    publicPath: "/",
+    path: path.resolve("./dist"),
+    filename: "[name].[contenthash].bundle.js",
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
+  },
   resolve: {
     alias: {
       src: "/src",
     },
     extensions: [".ts", ".tsx", ".js", ".jsx"],
-    // Uncomment this, if you're using react@17
-    // fallback: {
-    //   "react/jsx-runtime": "react/jsx-runtime.js",
-    //   "react/jsx-dev-runtime": "react/jsx-dev-runtime.js",
-    // },
   },
   module: {
     rules: [
@@ -59,9 +64,16 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ["@svgr/webpack"],
+      },
     ],
   },
   plugins: [
+    new Dotenv(),
+    new CompressionPlugin(),
     new webpack.ProvidePlugin({
       React: "react",
     }),
@@ -71,36 +83,12 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "assets/main.css",
     }),
-    // new ModuleFederationPlugin({
-    //   name: "host", // You can change this if you want :)
-    //   remotes: {
-    //     // Your known remotes
-    //     // "@remote": "app_name@http://localhost:3002/remoteEntry.js",
-    //   },
-    //   shared: [
-    //     deps,
-    //     {
-    //       react: {
-    //         eager: true,
-    //         singleton: true,
-    //         requiredVersion: deps.react,
-    //       },
-    //     },
-    //     {
-    //       "react-dom": {
-    //         eager: true,
-    //         singleton: true,
-    //         requiredVersion: deps["react-dom"],
-    //       },
-    //     },
-    //   ],
-    // }),
   ],
-  devtool: "source-map",
+  devtool: false,
   devServer: {
     hot: true,
+    port: process.env.PORT || 3001,
     historyApiFallback: true,
-    port: process.env.FRONTEND_PORT,
     static: path.join(__dirname, "dist"),
   },
 };

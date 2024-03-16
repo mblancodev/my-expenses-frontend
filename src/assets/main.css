@@ -577,6 +577,10 @@ video {
   margin-bottom: 1.25rem;
 }
 
+.max-w-lg {
+  max-width: 32rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
