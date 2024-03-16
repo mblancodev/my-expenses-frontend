@@ -1,0 +1,48 @@
+{
+  "name": "mf-host-template",
+  "version": "1.0.0",
+  "description": "Webpack's Module Federation Template Configuration for a host app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run devmode \" \"npm run dev:css\"",
+    "devmode": "webpack serve --mode development",
+    "dev:css": "tailwindcss -i ./src/assets/tailwind.css -o ./src/assets/main.css --watch"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.11",
+    "@babel/plugin-transform-runtime": "^7.22.10",
+    "@babel/preset-env": "^7.22.14",
+    "@babel/preset-react": "^7.22.5",
+    "autoprefixer": "^10.4.16",
+    "babel-loader": "^9.1.3",
+    "concurrently": "^8.2.2",
+    "css-loader": "^6.8.1",
+    "html-loader": "^4.2.0",
+    "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "postcss": "^8.4.31",
+    "postcss-loader": "^7.3.3",
+    "style-loader": "^3.3.3",
+    "tailwindcss": "^3.3.5",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mblancodev/MF-host-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mblancodev/MF-host-template/issues"
+  },
+  "homepage": "https://github.com/mblancodev/MF-host-template#readme"
+}
