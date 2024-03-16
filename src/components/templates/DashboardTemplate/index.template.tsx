@@ -2,18 +2,38 @@ import Paparse from "papaparse";
 import { ChangeEvent, useState } from "react";
 import ExcelParser, { Row } from "read-excel-file";
 import styles from "./DashboardTemplate.module.css";
+import { Cell } from "read-excel-file/types";
+import { DateTime } from "luxon";
+import { formatDate } from "src/helpers/formatDate.helper";
 
 const VALUES_HEADER = "VALOR";
 
+export type UserDataValues = Array<{
+  date: Cell;
+  value: Cell;
+  description: Cell;
+}>;
+
 export const DashboardTemplate = () => {
-  const [expenses, setExpenses] = useState(null);
+  const [expenses, setExpenses] = useState<null | UserDataValues>(null);
 
   function handleExcelDataRead(data: Row[]) {
     const [headers, ...values] = data;
 
-    const valuesHeader = headers.filter(t => t === VALUES_HEADER)[0];
+    const valuesIndex = headers.findIndex((t) => t === VALUES_HEADER);
+    const descriptionIndex = 1;
+    const dateIndex = 0;
 
-    console.log(headers, values, "--excel");
+    const result = values.reduce((acc, current, i) => {
+      acc.push({
+        date: current[dateIndex],
+        value: current[valuesIndex],
+        description: current[descriptionIndex],
+      });
+      return acc;
+    }, [] as UserDataValues);
+
+    setExpenses(result);
   }
 
   function handleCsvDataRead(data: any) {
@@ -94,6 +114,28 @@ export const DashboardTemplate = () => {
           </button>
         </div>
       </form>
+
+      {expenses && expenses.length ? (
+        <div className="my-10 pt-4 mx-auto max-w-xl">
+          <p className="text-sm">
+            Expenses list starting {`${formatDate(`${expenses[0].date}`)}`}{" "}
+            until {`${formatDate(`${expenses[expenses.length - 1].date}`)}`}{" "}
+          </p>
+          {expenses.map((t, k) => (
+            <div key={k}>
+              <br />
+              <div>
+                <b>Date:</b>
+                <span>{formatDate(`${t.date}`)}</span>{" "}
+              </div>
+              <div>
+                <b>Value:</b>
+                <span>{`${t.value}`}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };
