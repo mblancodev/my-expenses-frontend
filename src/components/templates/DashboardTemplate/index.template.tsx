@@ -1,7 +1,5 @@
+import styles from "./DashboardTemplate.module.css";
+
 export const DashboardTemplate = () => {
-  return (
-    <div className="p-4 mx-auto max-w-lg">
-      Dashboard page template
-    </div>
-  )
-}
+  return <div className={styles.x}>Dashboard page template</div>;
+};

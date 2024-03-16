@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prod": "concurrently \"npm run routes\" \"npm run prod:css\" concurrently \"npm run prodmode \"",
-    "dev": "concurrently \"npm run dev:css\" \"npm run devmode \"",
+    "dev": "concurrently \"npm run devmode \" \"npm run dev:css\"",
     "devmode": "webpack serve --mode development",
     "prodmode": "webpack build --mode production --config ./webpack.config.prod.js",
     "dev:css": "tailwindcss -i ./src/assets/tailwind.css -o ./src/assets/main.css --watch",
