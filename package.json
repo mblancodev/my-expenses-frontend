@@ -1,7 +1,7 @@
 {
-  "name": "mf-host-template",
+  "name": "my-expenses",
   "version": "1.0.0",
-  "description": "Webpack's Module Federation Template Configuration for a host app",
+  "description": "My expenses frontend - A tool that I need to check my monthly expenses :)",
   "main": "index.js",
   "scripts": {
     "prod": "concurrently \"npm run routes\" \"npm run prod:css\" concurrently \"npm run prodmode \"",
@@ -79,7 +79,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/mblancodev/MF-host-template/issues"
   },
