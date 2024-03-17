@@ -5,12 +5,21 @@ import { SearchInputs } from "src/components/molecules/SearchInputs";
 import { TransactionsTable } from "src/components/organisms/TransactionsTable";
 
 export const ResultsTableTemplate = () => {
-  const { chartConfig } = useChart();
+  const { createChartConfig, getLabelsFromData, minValues, maxValues } =
+    useChart();
+
+  const expenses = createChartConfig(minValues, getLabelsFromData(minValues));
+  const income = createChartConfig(maxValues, getLabelsFromData(maxValues));
 
   return (
     <>
-      <div className="h-screen">
-        <PieChart data={chartConfig} />
+      <div className="grid grid-cols-2 px-4">
+        <div className="h-56">
+          <PieChart data={expenses} />
+        </div>
+        <div className="h-56">
+          <PieChart data={income} />
+        </div>
       </div>
       <ExpensesCards />
       <main>

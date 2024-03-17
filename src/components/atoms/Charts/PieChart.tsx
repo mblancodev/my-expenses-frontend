@@ -6,6 +6,7 @@ export const PieChart = ({ data }: ChartProps) => {
   return (
     <Pie
       data={data}
+      className="w-full"
       // @ts-expect-error
       options={defaultOptions}
     />
