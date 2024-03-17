@@ -6,6 +6,7 @@ import { router } from "./router";
 import "./assets/main.css";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
+import "chart.js/auto";
 
 const queryClient = new QueryClient();
 const root = createRoot(document.getElementById("root") as HTMLElement);
