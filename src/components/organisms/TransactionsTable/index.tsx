@@ -52,7 +52,7 @@ export const TransactionsTable = () => {
   }, [searchTerm, columnName]);
 
   return (
-    <>
+    <main className="p-4">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 cursor-default">
@@ -93,6 +93,6 @@ export const TransactionsTable = () => {
           </div>
         </div>
       </div>
-    </>
+    </main>
   );
 };

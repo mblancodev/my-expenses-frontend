@@ -118,7 +118,7 @@ export const UploadForm = () => {
               <label>Files selected</label>
               <ul>
                 {files.map((t, index) => (
-                  <li>
+                  <li key={index}>
                     <span className="text-sm font-medium text-grat-500">
                       {index + 1} {")"} {t.name}
                     </span>

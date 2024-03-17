@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export type fileHeaderSliceType = {
   list: Array<string>;
   dateCellName: string;
+  descCellName: string;
   valuesCellName: string;
   valuesCellIndex: number;
 };
@@ -12,6 +13,7 @@ export const initialState: fileHeaderSliceType = {
   dateCellName: "",
   valuesCellName: "",
   valuesCellIndex: 0,
+  descCellName: "DESCRIPCIÓN",
 };
 
 const reducers = {
@@ -33,6 +35,12 @@ const reducers = {
   ) {
     state.dateCellName = payload;
   },
+  setFileHeadersDescriptionCellName(
+    state: typeof initialState,
+    { payload }: { payload: string }
+  ) {
+    state.descCellName = payload;
+  },
   setFileHeadersValuesCellIndex(
     state: typeof initialState,
     { payload }: { payload: number }
@@ -52,6 +60,7 @@ export const {
   setFileHeadersDateCellName,
   setFileHeadersValuesCellName,
   setFileHeadersValuesCellIndex,
+  setFileHeadersDescriptionCellName,
 } = slice.actions;
 
 export default slice.reducer;

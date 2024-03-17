@@ -860,6 +860,14 @@ select {
   height: 1.25rem;
 }
 
+.h-64 {
+  height: 16rem;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
 .max-h-60 {
   max-height: 15rem;
 }
