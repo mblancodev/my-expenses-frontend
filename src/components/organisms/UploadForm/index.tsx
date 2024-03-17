@@ -4,11 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import ExcelParser from "read-excel-file";
 import { setExpensesList } from "src/app/slices/expenses.slice";
-import {
-  setFileHeadersDateCellName,
-  setFileHeadersList,
-  setFileHeadersValuesCellName,
-} from "src/app/slices/file-headers.slice";
+import { setFileHeadersList } from "src/app/slices/file-headers.slice";
 import { useExcelDataRead } from "src/hooks/useExcelDataRead.hook";
 import { GenerativeDictionaryType } from "src/types";
 
@@ -26,18 +22,13 @@ export const UploadForm = () => {
     const result: GenerativeDictionaryType<any> = {
       headers: [],
       expenses: [],
-      dateCellIndex: 0,
-      valuesCellIndex: 0,
     };
 
     for (let file of files) {
       if (file.type.includes("xml")) {
-        const { expenses, headers, dateCellIndex, valuesCellIndex } =
-          useExcelDataRead(await ExcelParser(file));
+        const { expenses, headers } = useExcelDataRead(await ExcelParser(file));
         result.headers = Array.from([...result.headers, ...headers]);
         result.expenses = Array.from([...result.expenses, ...expenses]);
-        result.dateCellIndex = dateCellIndex;
-        result.valuesCellIndex = valuesCellIndex;
       } else {
         await Paparse.parse(files[0], {
           fastMode: true,
@@ -48,13 +39,12 @@ export const UploadForm = () => {
     }
 
     dispatch(setExpensesList(result.expenses));
-    dispatch(setFileHeadersList(result.headers as string[]));
     dispatch(
-      setFileHeadersDateCellName(result.headers[result.dateCellIndex] as string)
-    );
-    dispatch(
-      setFileHeadersValuesCellName(
-        result.headers[result.valuesCellIndex] as string
+      setFileHeadersList(
+        result.headers.reduce((acc: string[], item: string) => {
+          if (!acc.includes(item)) acc.push(item);
+          return acc;
+        }, []) as string[]
       )
     );
 

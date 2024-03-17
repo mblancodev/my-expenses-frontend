@@ -10,9 +10,9 @@ export type fileHeaderSliceType = {
 
 export const initialState: fileHeaderSliceType = {
   list: [],
-  dateCellName: "",
-  valuesCellName: "",
   valuesCellIndex: 0,
+  dateCellName: "FECHA",
+  valuesCellName: "VALOR",
   descCellName: "DESCRIPCIÓN",
 };
 
