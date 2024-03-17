@@ -1,36 +1,64 @@
 import Paparse from "papaparse";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { useDispatch } from "react-redux";
-import ExcelParser, { Row } from "read-excel-file";
+import { useNavigate } from "react-router";
+import ExcelParser from "read-excel-file";
 import { setExpensesList } from "src/app/slices/expenses.slice";
 import {
   setFileHeadersDateCellName,
   setFileHeadersList,
   setFileHeadersValuesCellName,
 } from "src/app/slices/file-headers.slice";
-import { isValidDate } from "src/helpers/checkIsValidDate.helper";
-import { transformToArrayOfObjects } from "src/helpers/transformToArrayOfObjects.helper";
+import { useExcelDataRead } from "src/hooks/useExcelDataRead.hook";
+import { GenerativeDictionaryType } from "src/types";
 
 export const UploadForm = () => {
+  const [files, setFilesList] = useState<Array<File>>([]);
   const dispatch = useDispatch();
-
-  function handleExcelDataRead(data: Row[]) {
-    const [headers, ...values] = data;
-    const valuesCellIndex = values[0].findIndex(
-      (t) => !isNaN(parseFloat(t as string))
-    );
-    const expenses = transformToArrayOfObjects(data);
-    const dateCellIndex = values[0].findIndex((t) => isValidDate(`${t}`));
-
-    dispatch(setExpensesList(expenses));
-    dispatch(setFileHeadersList(headers as string[]));
-    dispatch(setFileHeadersDateCellName(headers[dateCellIndex] as string));
-    dispatch(setFileHeadersValuesCellName(headers[valuesCellIndex] as string));
-  }
+  const navigate = useNavigate();
 
   function handleCsvDataRead(data: any) {
     const [headers, ...values] = data;
     console.log(headers, values, "--csv");
+  }
+
+  async function handleSubmit() {
+    const result: GenerativeDictionaryType<any> = {
+      headers: [],
+      expenses: [],
+      dateCellIndex: 0,
+      valuesCellIndex: 0,
+    };
+
+    for (let file of files) {
+      if (file.type.includes("xml")) {
+        const { expenses, headers, dateCellIndex, valuesCellIndex } =
+          useExcelDataRead(await ExcelParser(file));
+        result.headers = Array.from([...result.headers, ...headers]);
+        result.expenses = Array.from([...result.expenses, ...expenses]);
+        result.dateCellIndex = dateCellIndex;
+        result.valuesCellIndex = valuesCellIndex;
+      } else {
+        await Paparse.parse(files[0], {
+          fastMode: true,
+          complete: handleCsvDataRead,
+          error: (e) => console.error(e),
+        });
+      }
+    }
+
+    dispatch(setExpensesList(result.expenses));
+    dispatch(setFileHeadersList(result.headers as string[]));
+    dispatch(
+      setFileHeadersDateCellName(result.headers[result.dateCellIndex] as string)
+    );
+    dispatch(
+      setFileHeadersValuesCellName(
+        result.headers[result.valuesCellIndex] as string
+      )
+    );
+
+    navigate("/results");
   }
 
   // TODO: This file read should be when the user actually sends the form
@@ -38,15 +66,7 @@ export const UploadForm = () => {
     const files = e.target.files;
     if (!files || !files.length) return;
 
-    if (files[0].type.includes("xml")) {
-      handleExcelDataRead(await ExcelParser(files[0]));
-    } else {
-      await Paparse.parse(files[0], {
-        fastMode: true,
-        complete: handleCsvDataRead,
-        error: (e) => console.error(e),
-      });
-    }
+    setFilesList(Array.from(files));
   }
 
   return (
@@ -63,7 +83,7 @@ export const UploadForm = () => {
                 htmlFor="cover-photo"
                 className="block text-sm font-medium leading-6"
               >
-                Expenses Excel
+                Expenses files
               </label>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed dark:border-gray-200/25 border-gray-800/25 px-6 py-10">
                 <div className="text-center">
@@ -74,6 +94,7 @@ export const UploadForm = () => {
                     >
                       <span>Upload a file</span>
                       <input
+                        multiple
                         type="file"
                         id="file-upload"
                         name="file-upload"
@@ -91,6 +112,21 @@ export const UploadForm = () => {
               </div>
             </div>
           </div>
+
+          {files.length ? (
+            <div className="mt-4 cursor-default">
+              <label>Files selected</label>
+              <ul>
+                {files.map((t, index) => (
+                  <li>
+                    <span className="text-sm font-medium text-grat-500">
+                      {index + 1} {")"} {t.name}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -99,6 +135,10 @@ export const UploadForm = () => {
           Cancel
         </button>
         <button
+          onClick={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
           type="submit"
           className="rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
         >
