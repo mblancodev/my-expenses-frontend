@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export type expensesSliceType = {
-  list: Array<unknown>;
+  list: Array<any>;
 };
 
 export const initialState: expensesSliceType = {

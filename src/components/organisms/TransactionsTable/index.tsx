@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "src/app/store";
 import { GenerativeDictionaryType } from "src/types";
-import { formatDate } from "src/helpers/formatDate.helper";
-import { formatAmount } from "src/helpers/formatAmount.helper";
+import { beautifyData } from "src/helpers/beautifyData.helper";
 
 export interface TransactionsTableProps {
   headers: string[];
@@ -21,24 +20,36 @@ export const TransactionsTable = () => {
   const dateCellName = useSelector(
     (state: RootState) => state.fileHeaders.dateCellName
   );
-  const data = useSelector((state: RootState) => state.expenses.list);
-  const [formattedData, setFormattedData] = useState<any[]>([]);
 
-  function handleFormatColumnAmount(data: any[], valuesCellName: string) {
-    const f = JSON.parse(JSON.stringify(data)).map((t: any) => {
-      t[valuesCellName] = formatAmount(t[valuesCellName] as number);
-      t[dateCellName] = formatDate(t[dateCellName] as string);
-      return t;
-    });
-    return f;
-  }
+  const columnName = useSelector((state: RootState) => state.filter.columnName);
+  const searchTerm = useSelector((state: RootState) => state.filter.searchTerm);
+
+  const data = useSelector((state: RootState) => state.expenses.list).filter(
+    (t: GenerativeDictionaryType<string>) =>
+      searchTerm && columnName
+        ? `${t[columnName]}`.toLowerCase().includes(searchTerm.toLowerCase())
+        : t
+  );
+
+  const [formattedData, setFormattedData] = useState<any[]>([]);
 
   useEffect(() => {
     if (data?.length && !isDataFormatted) {
-      setFormattedData(handleFormatColumnAmount(data, valuesCellName));
+      setFormattedData(beautifyData(data, valuesCellName, dateCellName));
       isDataFormatted = true;
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!columnName) {
+      setFormattedData(beautifyData(data, valuesCellName, dateCellName));
+      return;
+    }
+
+    if (searchTerm && columnName) {
+      setFormattedData(beautifyData(data, valuesCellName, dateCellName));
+    }
+  }, [searchTerm, columnName]);
 
   return (
     <>

@@ -35,6 +35,7 @@ export const UploadForm = () => {
     console.log(headers, values, "--csv");
   }
 
+  // TODO: This file read should be when the user actually sends the form
   async function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files || !files.length) return;

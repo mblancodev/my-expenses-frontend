@@ -25,10 +25,11 @@ export const SearchInputs = () => {
         />
       </div>
       <div>
-        <label>Valor de:</label>
+        <label>Que incluya:</label>
         <BaseInput
           id="search-term"
           value={searchTerm}
+          disabled={Boolean(filter === "")}
           onChange={(e) => {
             dispatch(setSearchTerm(e.target.value));
           }}
