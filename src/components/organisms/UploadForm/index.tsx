@@ -8,7 +8,7 @@ import {
   setFileHeadersList,
   setFileHeadersValuesCellName,
 } from "src/app/slices/file-headers.slice";
-import { checkIfDate } from "src/helpers/checkIfDate.helper";
+import { isValidDate } from "src/helpers/checkIsValidDate.helper";
 import { transformToArrayOfObjects } from "src/helpers/transformToArrayOfObjects.helper";
 
 export const UploadForm = () => {
@@ -20,9 +20,7 @@ export const UploadForm = () => {
       (t) => !isNaN(parseFloat(t as string))
     );
     const expenses = transformToArrayOfObjects(data);
-    const dateCellIndex = values[0].findIndex((t) =>
-      checkIfDate(new Date(`${t}`))
-    );
+    const dateCellIndex = values[0].findIndex((t) => isValidDate(`${t}`));
 
     dispatch(setExpensesList(expenses));
     dispatch(setFileHeadersList(headers as string[]));
