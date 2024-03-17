@@ -1,10 +1,55 @@
+import Paparse from "papaparse";
 import { ChangeEvent } from "react";
+import { useDispatch } from "react-redux";
+import ExcelParser, { Row } from "read-excel-file";
+import { setExpensesList } from "src/app/slices/expenses.slice";
+import {
+  setFileHeadersDateCellName,
+  setFileHeadersList,
+  setFileHeadersValuesCellName,
+} from "src/app/slices/file-headers.slice";
+import { checkIfDate } from "src/helpers/checkIfDate.helper";
+import { transformToArrayOfObjects } from "src/helpers/transformToArrayOfObjects.helper";
 
-export const UploadForm = ({
-  handleInputChange,
-}: {
-  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
-}) => {
+export const UploadForm = () => {
+  const dispatch = useDispatch();
+
+  function handleExcelDataRead(data: Row[]) {
+    const [headers, ...values] = data;
+    const valuesCellIndex = values[0].findIndex(
+      (t) => !isNaN(parseFloat(t as string))
+    );
+    const expenses = transformToArrayOfObjects(data);
+    const dateCellIndex = values[0].findIndex((t) =>
+      checkIfDate(new Date(`${t}`))
+    );
+
+    dispatch(setExpensesList(expenses));
+    dispatch(setFileHeadersList(headers as string[]));
+    dispatch(setFileHeadersDateCellName(headers[dateCellIndex] as string));
+    dispatch(setFileHeadersValuesCellName(headers[valuesCellIndex] as string));
+  }
+
+  function handleCsvDataRead(data: any) {
+    const [headers, ...values] = data;
+    console.log(headers, values, "--csv");
+  }
+
+  async function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || !files.length) return;
+
+    if (files[0].type.includes("xml")) {
+      handleExcelDataRead(await ExcelParser(files[0]));
+    } else {
+      await Paparse.parse(files[0], {
+        fastMode: true,
+        complete: handleCsvDataRead,
+        error: (e) => console.error(e),
+      });
+    }
+  }
+
   return (
     <form className="bg-white border border-gray-200 p-4 rounded-mg shadow-sm">
       <div className="space-y-12">

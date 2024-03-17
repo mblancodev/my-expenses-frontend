@@ -1,26 +1,33 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "src/app/store";
+import { GenerativeDictionaryType } from "src/types";
+import { formatDate } from "src/helpers/formatDate.helper";
 import { formatAmount } from "src/helpers/formatAmount.helper";
 
 export interface TransactionsTableProps {
-  valuesCellName: string;
   headers: string[];
-  data: Array<{
-    [s: string]: any;
-  }>;
+  valuesCellName: string;
+  data: GenerativeDictionaryType<any>;
 }
 
 let isDataFormatted = false;
 
-export const TransactionsTable = ({
-  data,
-  headers,
-  valuesCellName,
-}: TransactionsTableProps) => {
+export const TransactionsTable = () => {
+  const headers = useSelector((state: RootState) => state.fileHeaders.list);
+  const valuesCellName = useSelector(
+    (state: RootState) => state.fileHeaders.valuesCellName
+  );
+  const dateCellName = useSelector(
+    (state: RootState) => state.fileHeaders.dateCellName
+  );
+  const data = useSelector((state: RootState) => state.expenses.list);
   const [formattedData, setFormattedData] = useState<any[]>([]);
 
   function handleFormatColumnAmount(data: any[], valuesCellName: string) {
-    const f = data.map((t) => {
+    const f = JSON.parse(JSON.stringify(data)).map((t: any) => {
       t[valuesCellName] = formatAmount(t[valuesCellName] as number);
+      t[dateCellName] = formatDate(t[dateCellName] as string);
       return t;
     });
     return f;
