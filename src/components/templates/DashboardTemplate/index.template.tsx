@@ -1,16 +1,17 @@
 import Paparse from "papaparse";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import ExcelParser, { Row } from "read-excel-file";
 import styles from "./DashboardTemplate.module.css";
 import { Cell } from "read-excel-file/types";
 import { TransactionsTable } from "src/components/organisms/TransactionsTable";
 import { UploadForm } from "src/components/organisms/UploadForm";
-import { calculateTotalIncome } from "src/helpers/calculateTotalIncome.helper";
-import { formatAmount } from "src/helpers/formatAmount.helper";
-import { calculateTotalExpenses } from "src/helpers/calculateTotalExpenses.helper";
 
 import clsx from "clsx";
-import { getHighestExpense } from "src/helpers/getHighestExpense.helper";
+import { useExpenses } from "src/hooks/useExpenses.hook";
+import { formatAmount } from "src/helpers/formatAmount.helper";
+import SingleSelect from "src/components/atoms/Inputs/SingleSelect";
+import { BaseInput } from "src/components/atoms/Inputs/BaseInput";
+import { transformToArrayOfObjects } from "src/helpers/transformToArrayOfObjects.helper";
 
 export type UserDataValues = Array<{
   date: Cell;
@@ -19,20 +20,23 @@ export type UserDataValues = Array<{
 }>;
 
 export const DashboardTemplate = () => {
-  const [expenses, setExpenses] = useState<null | any[]>(null);
+  const [filter, setFilter] = useState("");
+  const [expenses, setExpenses] = useState<any[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-  const [valuesIndex, setValuesIndex] = useState<number>(0);
+  const [valuesCellName, setValuesCellName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dataFiltered, setDataFiltered] = useState<any[]>([]);
 
   function handleExcelDataRead(data: Row[]) {
     const [headers, ...values] = data;
-
-    const valuesIndex = values[0].findIndex(
+    const valuesCellIndex = values[0].findIndex(
       (t) => !isNaN(parseFloat(t as string))
     );
+    const d = transformToArrayOfObjects(data)
 
+    setExpenses(d);
     setHeaders(headers as string[]);
-    setValuesIndex(valuesIndex);
-    setExpenses(values);
+    setValuesCellName(headers[valuesCellIndex] as string);
   }
 
   function handleCsvDataRead(data: any) {
@@ -55,25 +59,8 @@ export const DashboardTemplate = () => {
     }
   }
 
-  const _expensesValues = expenses
-    ?.map((t) => t[valuesIndex])
-    .flat() as number[];
-
-  const totalExpenses = useMemo(() => {
-    return calculateTotalExpenses(_expensesValues);
-  }, [_expensesValues]);
-
-  const totalIncome = useMemo(() => {
-    return calculateTotalIncome(_expensesValues);
-  }, [_expensesValues]);
-
-  const totalSavings = useMemo(() => {
-    return totalIncome - totalExpenses;
-  }, [totalIncome, totalExpenses]);
-
-  const highestExpense = useMemo(() => {
-    return getHighestExpense(_expensesValues);
-  }, [_expensesValues]);
+  const { totalExpenses, totalIncome, totalSavings, highestExpense } =
+    useExpenses(expenses, valuesCellName);
 
   return (
     <>
@@ -131,13 +118,50 @@ export const DashboardTemplate = () => {
           </p>
         </div>
       </div>
-      {expenses && expenses.length && headers.length ? (
-        <TransactionsTable
-          valuesIndex={valuesIndex}
-          headers={headers}
-          data={expenses}
-        />
-      ) : null}
+      <div>
+        <header className="px-8 flex gap-4 lg:items-center lg:flex-nowrap">
+          <div>
+            <label className="font-semibold text-sm text-gray-600 inline-block mb-1">
+              Filtrar por:
+            </label>
+            <SingleSelect
+              value={filter}
+              onChange={setFilter}
+              options={headers.map((t) => ({ label: t, value: t }))}
+            />
+          </div>
+          <div>
+            <label>Valor de:</label>
+            <BaseInput
+              id="search-term"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </header>
+
+        {expenses &&
+        expenses.length &&
+        headers.length &&
+        !dataFiltered.length ? (
+          <TransactionsTable
+            valuesCellName={valuesCellName}
+            headers={headers}
+            data={expenses}
+          />
+        ) : null}
+
+        {expenses &&
+        expenses.length &&
+        headers.length &&
+        dataFiltered.length ? (
+          <TransactionsTable
+            valuesCellName={valuesCellName}
+            headers={headers}
+            data={dataFiltered}
+          />
+        ) : null}
+      </div>
     </>
   );
 };

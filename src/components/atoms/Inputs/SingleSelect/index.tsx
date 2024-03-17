@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export type SelectOption = { value: string; label: string };
 
@@ -80,6 +80,23 @@ export const SingleSelect = ({
                   setFilter(e.target.value);
                 }}
               />
+              {currentValue.value !== "" ? (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleChange({
+                      label: "",
+                      value: "",
+                    });
+                  }}
+                  className="cursor-pointer absolute inset-y-0 right-6 flex items-center pr-2"
+                >
+                  <TrashIcon
+                    className="h-4 w-4 text-gray-400 hover:text-gray-800"
+                    aria-hidden="true"
+                  />
+                </span>
+              ) : null}
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronDownIcon
                   className="h-4 w-4 text-gray-400"
