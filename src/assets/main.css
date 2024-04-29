@@ -729,6 +729,40 @@ select {
   --tw-backdrop-sepia:  ;
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -792,8 +826,26 @@ select {
   margin-bottom: -0.5rem;
 }
 
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
+}
+
+.mt-0 {
+  margin-top: 0px;
+}
+
+.mt-0\.5 {
+  margin-top: 0.125rem;
 }
 
 .mt-1 {
@@ -818,14 +870,6 @@ select {
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mt-0 {
-  margin-top: 0px;
-}
-
-.mt-0\.5 {
-  margin-top: 0.125rem;
 }
 
 .block {
@@ -1101,6 +1145,11 @@ select {
   padding-bottom: 2.5rem;
 }
 
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -1338,7 +1387,7 @@ html.dark {
 body,
 html {
   --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: rgb(31 41 55 / var(--tw-text-opacity));
 }
@@ -1405,12 +1454,138 @@ html {
   }
 }
 
-.base-input.disabled, .base-input:disabled {
+.base-input.disabled,
+.base-input:disabled {
   border-width: 1px;
   --tw-border-opacity: 1;
   border-color: rgb(156 163 175 / var(--tw-border-opacity));
   background-color: rgb(156 163 175 / var(--tw-bg-opacity));
   --tw-bg-opacity: 0.1;
+}
+
+:root {
+  --react-time-range--gray: #C8CACC;
+  --react-time-range--highlight-tap: #000000;
+  --react-time-range--rail-bg: #F5F7FA;
+  --react-time-range--handle-bg: #FFFFFF;
+  --react-time-range--handle-bg--disabled: #666;
+  --react-time-range--track--valid: rgb(98, 203, 102);
+  --react-time-range--track--not-valid: rgb(214, 0, 11);
+  --react-time-range--tick-label: #77828C;
+  --react-time-range--track--disabled: repeating-linear-gradient(-45deg, transparent, transparent 3px, #D0D3D7 4px, #D0D3D7 2px);
+}
+
+.react_time_range__time_range_container {
+  padding: 30px 10% 0;
+  height: 70px;
+  width: 90%;
+  box-sizing: border-box;
+}
+
+.react_time_range__keyboard_handle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.react_time_range__track {
+  position: absolute;
+  transform: translate(0%, -50%);
+  height: 50px;
+  cursor: pointer;
+  transition: background-color .15s ease-in-out, border-color .15s ease;
+  z-index: 3;
+}
+
+.react_time_range__track__disabled {
+  position: absolute;
+  z-index: 1;
+  border-left: 1px solid var(--react-time-range--gray);
+  border-right: 1px solid var(--react-time-range--gray);
+  background: var(--react-time-range--track--disabled);
+}
+
+.react_time_range__rail__outer,
+.react_time_range__rail__inner {
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  transform: translate(0%, -50%);
+  cursor: pointer;
+}
+
+.react_time_range__rail__inner {
+  pointer-events: none;
+  background-color: var(--react-time-range--rail-bg);
+  border-bottom: 1px solid var(--react-time-range--gray);
+}
+
+.react_time_range__handle_wrapper {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  -webkit-tap-highlight-color: var(--react-time-range--highlight-tap);
+  z-index: 6;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.react_time_range__handle_container {
+  position: absolute;
+  display: flex;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  width: 10px;
+  height: 24px;
+  border-radius: 4px;
+  box-shadow: 0 0 3px rgba(0,0,0, 0.4);
+  background-color: var(--react-time-range--handle-bg);
+}
+
+.react_time_range__handle_container__disabled {
+  background-color: var(--react-time-range--handle-bg--disabled);
+}
+
+.react_time_range__handle_marker {
+  width: 2px;
+  height: 12px;
+  margin: auto;
+  border-radius: 2px;
+  background-color: var(--react-time-range--track--valid);
+  transition: background-color .2s ease;
+}
+
+.react_time_range__handle_marker__error {
+  background-color: var(--react-time-range--track--not-valid);
+}
+
+.react_time_range__tick_marker,
+.react_time_range__tick_marker__large {
+  position: absolute;
+  margin-top: 20px;
+  width: 1px;
+  height: 5px;
+  background-color: var(--react-time-range--gray);
+  z-index: 2;
+}
+
+.react_time_range__tick_marker__large {
+  margin-top: 15px;
+  height: 10px;
+}
+
+.react_time_range__tick_label {
+  position: absolute;
+  margin-top: 28px;
+  font-size: 10px;
+  text-align: center;
+  z-index: 2;
+  color: var(--react-time-range--tick-label);
 }
 
 .even\:bg-gray-50:nth-child(even) {
