@@ -89,42 +89,58 @@ export const TimelineRange = (props: TimelineRange) => {
   };
 
   return (
-    <div>
-      <div className="react_time_range__time_range_container">
-        <Slider
-          domain={domain}
-          step={props.step}
-          mode={props.mode}
-          onUpdate={onUpdate}
-          values={props.values}
-          onChange={props.onChange}
-          rootStyle={{ position: "relative", width: "100%" }}
-        >
-          <Rail>
-            {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
-          </Rail>
-          <Handles>
-            {({ handles, getHandleProps }) => (
-              <>
-                {handles.map((handle) => (
-                  <Handle
-                    key={handle.id}
-                    handle={handle}
-                    domain={domain}
-                    getHandleProps={getHandleProps}
-                  />
-                ))}
-              </>
-            )}
-          </Handles>
+    <div className="react_time_range__time_range_container">
+      <Slider
+        domain={domain}
+        step={props.step}
+        mode={props.mode}
+        onUpdate={onUpdate}
+        values={props.values}
+        onChange={props.onChange}
+        rootStyle={{ position: "relative", width: "100%" }}
+      >
+        <Rail>
+          {({ getRailProps }) => <SliderRail getRailProps={getRailProps} />}
+        </Rail>
+        <Handles>
+          {({ handles, getHandleProps }) => (
+            <>
+              {handles.map((handle) => (
+                <Handle
+                  key={handle.id}
+                  handle={handle}
+                  domain={domain}
+                  getHandleProps={getHandleProps}
+                />
+              ))}
+            </>
+          )}
+        </Handles>
 
+        <Tracks left={false} right={false}>
+          {({ tracks, getTrackProps }) => (
+            <>
+              {tracks?.map(({ id, source, target }) => (
+                <Track
+                  key={id}
+                  // error={error}
+                  source={source}
+                  target={target}
+                  getTrackProps={getTrackProps}
+                />
+              ))}
+            </>
+          )}
+        </Tracks>
+
+        {disabledIntervals.length && (
           <Tracks left={false} right={false}>
-            {({ tracks, getTrackProps }) => (
+            {({ getTrackProps }) => (
               <>
-                {tracks?.map(({ id, source, target }) => (
+                {disabledIntervals.map(({ id, source, target }) => (
                   <Track
                     key={id}
-                    // error={error}
+                    disabled
                     source={source}
                     target={target}
                     getTrackProps={getTrackProps}
@@ -133,41 +149,23 @@ export const TimelineRange = (props: TimelineRange) => {
               </>
             )}
           </Tracks>
+        )}
 
-          {disabledIntervals.length && (
-            <Tracks left={false} right={false}>
-              {({ getTrackProps }) => (
-                <>
-                  {disabledIntervals.map(({ id, source, target }) => (
-                    <Track
-                      key={id}
-                      disabled
-                      source={source}
-                      target={target}
-                      getTrackProps={getTrackProps}
-                    />
-                  ))}
-                </>
-              )}
-            </Tracks>
+        <Ticks values={dateTicks}>
+          {({ ticks }) => (
+            <>
+              {ticks.map((tick) => (
+                <Tick
+                  key={tick.id}
+                  tick={tick}
+                  count={ticks.length}
+                  format={formatTick}
+                />
+              ))}
+            </>
           )}
-
-          <Ticks values={dateTicks}>
-            {({ ticks }) => (
-              <>
-                {ticks.map((tick) => (
-                  <Tick
-                    key={tick.id}
-                    tick={tick}
-                    count={ticks.length}
-                    format={formatTick}
-                  />
-                ))}
-              </>
-            )}
-          </Ticks>
-        </Slider>
-      </div>
+        </Ticks>
+      </Slider>
     </div>
   );
 };
